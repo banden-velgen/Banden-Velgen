@@ -6,7 +6,6 @@ export interface Profile {
   email: string
   role: UserRole
   created_at: string
-  updated_at: string
 }
 
 export interface Product {
@@ -18,5 +17,4 @@ export interface Product {
   price: number
   stock: number
   created_at: string
-  updated_at: string
 }

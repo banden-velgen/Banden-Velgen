@@ -1,11 +1,11 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { supabase, type Product, type UserProfile } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase/client"
+import type { Product, Profile } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,9 +19,9 @@ import { Car, Plus, Edit, Trash2, Home } from "lucide-react"
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [products, setProducts] = useState<Product[]>([])
-  const [profiles, setProfiles] = useState<UserProfile[]>([])
+  const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)

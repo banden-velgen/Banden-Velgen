@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { supabase, type Product, type UserProfile } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase/client"
+import type { Product, Profile } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -15,7 +16,7 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [activeTab, setActiveTab] = useState<"tire" | "rim">("tire")
   const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
