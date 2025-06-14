@@ -8,7 +8,15 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Autobanden en Velgen",
   description: "Nieuw of 2e hands",
-    generator: 'v0.dev'
+  generator: "v0.dev",
+  icons: {
+    icon: [
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.png", sizes: "any", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/favicon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/site.webmanifest",
 }
 
 export default function RootLayout({

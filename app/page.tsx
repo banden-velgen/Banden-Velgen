@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Car, Settings, Eye, ShoppingCart } from "lucide-react"
+import { Settings, Eye, ShoppingCart } from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
@@ -89,7 +89,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Car className="h-8 w-8 text-red-600" />
+              <img src="/logo.png" alt="Autobanden en Velgen" className="h-10 w-12" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Autobanden en Velgen</h1>
                 <p className="text-sm text-gray-600">Nieuw of 2e hands</p>
