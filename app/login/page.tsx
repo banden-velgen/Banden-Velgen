@@ -24,14 +24,10 @@ export default function LoginPage() {
     setError("")
 
     try {
-      console.log("Attempting to login with:", email)
-
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-
-      console.log("Sign in response:", { data, error: signInError })
 
       if (signInError) {
         throw signInError
@@ -44,7 +40,14 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       console.error("Login error:", error)
-      setError(error.message || "Er is een fout opgetreden bij het inloggen")
+
+      if (error.message?.includes("Invalid login credentials")) {
+        setError("Onjuiste inloggegevens")
+      } else if (error.message?.includes("Email not confirmed")) {
+        setError("E-mail nog niet bevestigd - controleer uw inbox")
+      } else {
+        setError("Er is een fout opgetreden bij het inloggen")
+      }
     } finally {
       setLoading(false)
     }
@@ -103,17 +106,6 @@ export default function LoginPage() {
               <Link href="/register" className="text-sm text-blue-600 hover:underline">
                 Nog geen account? Registreer hier
               </Link>
-            </div>
-
-            {/* Admin login hint */}
-            <div className="mt-6 p-3 bg-blue-50 rounded-md border border-blue-200">
-              <p className="text-xs text-blue-600">
-                <strong>Admin login:</strong>
-                <br />
-                Email: admin@banden.autos
-                <br />
-                Password: Sales2025!@
-              </p>
             </div>
           </CardContent>
         </Card>

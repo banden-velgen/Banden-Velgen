@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Car } from 'lucide-react'
+import { Car } from "lucide-react"
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
@@ -20,17 +20,14 @@ export default function RegisterPage() {
 
   const createUserProfile = async (userId: string, userEmail: string) => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          email: userEmail,
-          role: userEmail === 'admin@banden.autos' ? 'admin' : 'buyer'
-        })
-      
+      const { error } = await supabase.from("profiles").insert({
+        id: userId,
+        email: userEmail,
+        role: userEmail === "admin@banden.autos" ? "admin" : "buyer",
+      })
+
       if (error) {
         console.error("Profile creation error:", error)
-        // Don't throw - user is still created
       }
     } catch (err) {
       console.error("Profile creation failed:", err)
@@ -55,13 +52,16 @@ export default function RegisterPage() {
     }
 
     try {
-      // Create auth user without email confirmation
+      // Create auth user with auto-confirm
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: undefined, // Disable email confirmation
-        }
+          emailRedirectTo: undefined,
+          data: {
+            email_confirm: true,
+          },
+        },
       })
 
       if (signUpError) {
@@ -75,17 +75,25 @@ export default function RegisterPage() {
       // Create profile manually
       await createUserProfile(data.user.id, email)
 
-      setSuccess(true)
+      // If user needs confirmation, show different message
+      if (data.user && !data.user.email_confirmed_at && data.user.confirmation_sent_at) {
+        setError("Controleer uw e-mail voor de bevestigingslink")
+        setLoading(false)
+        return
+      }
 
+      setSuccess(true)
     } catch (error: any) {
       console.error("Registration error:", error)
-      
-      if (error.message?.includes('already registered')) {
+
+      if (error.message?.includes("already registered")) {
         setError("Dit e-mailadres is al geregistreerd")
-      } else if (error.message?.includes('Invalid email')) {
+      } else if (error.message?.includes("Invalid email")) {
         setError("Ongeldig e-mailadres")
-      } else if (error.message?.includes('weak')) {
+      } else if (error.message?.includes("weak")) {
         setError("Wachtwoord te zwak - gebruik letters, cijfers en symbolen")
+      } else if (error.message?.includes("Email not confirmed")) {
+        setError("E-mail nog niet bevestigd - controleer uw inbox")
       } else {
         setError("Registratie mislukt - probeer het opnieuw")
       }
@@ -167,9 +175,7 @@ export default function RegisterPage() {
                 />
               </div>
               {error && (
-                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">
-                  {error}
-                </div>
+                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">{error}</div>
               )}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Bezig met registreren..." : "Registreren"}
