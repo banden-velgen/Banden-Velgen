@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Car, Plus, Edit, Trash2, Home } from "lucide-react"
+import { Plus, Edit, Trash2, Home } from "lucide-react"
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
@@ -142,7 +142,7 @@ export default function AdminPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2">
-                <Car className="h-8 w-8 text-red-600" />
+                <img src="/logo.png" alt="Autobanden en Velgen" className="h-10 w-12" />
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
                   <p className="text-sm text-gray-600">Autobanden en Velgen</p>
