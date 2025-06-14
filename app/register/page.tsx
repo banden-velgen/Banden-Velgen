@@ -29,16 +29,37 @@ export default function RegisterPage() {
       return
     }
 
+    if (password.length < 6) {
+      setError("Wachtwoord moet minimaal 6 karakters lang zijn")
+      setLoading(false)
+      return
+    }
+
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log("Attempting to register with:", email)
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+        },
       })
 
-      if (error) throw error
-      setSuccess(true)
+      console.log("Sign up response:", { data, error: signUpError })
+
+      if (signUpError) {
+        throw signUpError
+      }
+
+      if (data.user) {
+        setSuccess(true)
+      } else {
+        setError("Er is een probleem opgetreden bij de registratie")
+      }
     } catch (error: any) {
-      setError(error.message)
+      console.error("Registration error:", error)
+      setError(error.message || "Er is een fout opgetreden bij de registratie")
     } finally {
       setLoading(false)
     }
@@ -50,7 +71,7 @@ export default function RegisterPage() {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Registratie succesvol</CardTitle>
-            <CardDescription>Controleer uw e-mail voor de bevestigingslink</CardDescription>
+            <CardDescription>Uw account is aangemaakt! U kunt nu inloggen.</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/login">
@@ -84,7 +105,14 @@ export default function RegisterPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="email">E-mailadres</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="uw.email@example.com"
+                />
               </div>
               <div>
                 <Label htmlFor="password">Wachtwoord</Label>
@@ -94,6 +122,8 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={6}
+                  placeholder="Minimaal 6 karakters"
                 />
               </div>
               <div>
@@ -104,9 +134,12 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  placeholder="Herhaal uw wachtwoord"
                 />
               </div>
-              {error && <div className="text-red-600 text-sm">{error}</div>}
+              {error && (
+                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">{error}</div>
+              )}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Bezig met registreren..." : "Registreren"}
               </Button>

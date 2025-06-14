@@ -6,15 +6,14 @@
 In your Vercel dashboard, go to your project settings and add these environment variables:
 
 **Environment Variables:**
-- `NEXT_PUBLIC_SUPABASE_URL` = Your Supabase project URL (e.g., https://your-project.supabase.co)
+- `NEXT_PUBLIC_SUPABASE_URL` = https://htlxpkyypnsdshytgmtg.supabase.co
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = Your Supabase anonymous key
 
 ### 2. Supabase Setup
-1. Create a new Supabase project
-2. Go to Settings > API to get your URL and anon key
-3. Run the SQL scripts in the Supabase SQL Editor:
-   - First run `scripts/01-setup-database.sql`
-   - Then run `scripts/02-seed-products.sql`
+1. Your Supabase project URL: https://htlxpkyypnsdshytgmtg.supabase.co
+2. Go to Settings > API to get your anon key
+3. Run the SQL script in the Supabase SQL Editor:
+   - Run `scripts/07-simple-table-creation.sql`
 
 ### 3. Admin User Setup
 1. After deployment, register with:
@@ -32,3 +31,8 @@ In your Vercel dashboard, go to your project settings and add these environment 
 
 ### 5. Admin Access
 Once logged in as admin, you'll see the "Admin Dashboard" button in the header to manage products and users.
+
+### 6. Troubleshooting
+- Make sure environment variables are set correctly
+- Check browser console for any errors
+- Verify Supabase connection in the Network tab

@@ -24,15 +24,27 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("Attempting to login with:", email)
+
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (error) throw error
-      router.push("/")
+      console.log("Sign in response:", { data, error: signInError })
+
+      if (signInError) {
+        throw signInError
+      }
+
+      if (data.user) {
+        router.push("/")
+      } else {
+        setError("Inloggen mislukt")
+      }
     } catch (error: any) {
-      setError(error.message)
+      console.error("Login error:", error)
+      setError(error.message || "Er is een fout opgetreden bij het inloggen")
     } finally {
       setLoading(false)
     }
@@ -60,7 +72,14 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="email">E-mailadres</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="uw.email@example.com"
+                />
               </div>
               <div>
                 <Label htmlFor="password">Wachtwoord</Label>
@@ -70,9 +89,12 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  placeholder="Uw wachtwoord"
                 />
               </div>
-              {error && <div className="text-red-600 text-sm">{error}</div>}
+              {error && (
+                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">{error}</div>
+              )}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Bezig met inloggen..." : "Inloggen"}
               </Button>
@@ -81,6 +103,17 @@ export default function LoginPage() {
               <Link href="/register" className="text-sm text-blue-600 hover:underline">
                 Nog geen account? Registreer hier
               </Link>
+            </div>
+
+            {/* Admin login hint */}
+            <div className="mt-6 p-3 bg-blue-50 rounded-md border border-blue-200">
+              <p className="text-xs text-blue-600">
+                <strong>Admin login:</strong>
+                <br />
+                Email: admin@banden.autos
+                <br />
+                Password: Sales2025!@
+              </p>
             </div>
           </CardContent>
         </Card>
