@@ -142,7 +142,7 @@ export default function AdminPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2">
-                <img src="/logo.png" alt="Autobanden en Velgen" className="h-10 w-12" />
+                <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
                   <p className="text-sm text-gray-600">Autobanden en Velgen</p>
