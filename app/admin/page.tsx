@@ -44,7 +44,18 @@ export default function AdminPage() {
 
       setUser(session.user)
 
-      const { data: profileData } = await supabase.from("profiles").select("*").eq("id", session.user.id).single()
+      // Check if user is admin by checking their profile
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single()
+
+      if (profileError) {
+        console.error("Error fetching profile:", profileError)
+        router.push("/")
+        return
+      }
 
       if (!profileData || profileData.role !== "admin") {
         router.push("/")
@@ -74,10 +85,13 @@ export default function AdminPage() {
 
   const fetchProfiles = async () => {
     try {
-      const { data, error } = await supabase.from("profiles").select("*").order("created_at", { ascending: false })
+      // Only fetch profiles if current user is admin
+      if (profile?.role === "admin") {
+        const { data, error } = await supabase.from("profiles").select("*").order("created_at", { ascending: false })
 
-      if (error) throw error
-      setProfiles(data || [])
+        if (error) throw error
+        setProfiles(data || [])
+      }
     } catch (error) {
       console.error("Error fetching profiles:", error)
     }
