@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Car } from "lucide-react"
+import { Car } from 'lucide-react'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("")
@@ -17,6 +17,25 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+
+  const createUserProfile = async (userId: string, userEmail: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .insert({
+          id: userId,
+          email: userEmail,
+          role: userEmail === 'admin@banden.autos' ? 'admin' : 'buyer'
+        })
+      
+      if (error) {
+        console.error("Profile creation error:", error)
+        // Don't throw - user is still created
+      }
+    } catch (err) {
+      console.error("Profile creation failed:", err)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,30 +55,40 @@ export default function RegisterPage() {
     }
 
     try {
-      console.log("Attempting to register with:", email)
-
+      // Create auth user without email confirmation
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`,
-        },
+          emailRedirectTo: undefined, // Disable email confirmation
+        }
       })
-
-      console.log("Sign up response:", { data, error: signUpError })
 
       if (signUpError) {
         throw signUpError
       }
 
-      if (data.user) {
-        setSuccess(true)
-      } else {
-        setError("Er is een probleem opgetreden bij de registratie")
+      if (!data.user) {
+        throw new Error("User creation failed")
       }
+
+      // Create profile manually
+      await createUserProfile(data.user.id, email)
+
+      setSuccess(true)
+
     } catch (error: any) {
       console.error("Registration error:", error)
-      setError(error.message || "Er is een fout opgetreden bij de registratie")
+      
+      if (error.message?.includes('already registered')) {
+        setError("Dit e-mailadres is al geregistreerd")
+      } else if (error.message?.includes('Invalid email')) {
+        setError("Ongeldig e-mailadres")
+      } else if (error.message?.includes('weak')) {
+        setError("Wachtwoord te zwak - gebruik letters, cijfers en symbolen")
+      } else {
+        setError("Registratie mislukt - probeer het opnieuw")
+      }
     } finally {
       setLoading(false)
     }
@@ -70,8 +99,8 @@ export default function RegisterPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Registratie succesvol</CardTitle>
-            <CardDescription>Uw account is aangemaakt! U kunt nu inloggen.</CardDescription>
+            <CardTitle>Registratie succesvol!</CardTitle>
+            <CardDescription>Uw account is aangemaakt. U kunt nu inloggen.</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/login">
@@ -138,7 +167,9 @@ export default function RegisterPage() {
                 />
               </div>
               {error && (
-                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">{error}</div>
+                <div className="text-red-600 text-sm bg-red-50 p-3 rounded-md border border-red-200">
+                  {error}
+                </div>
               )}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Bezig met registreren..." : "Registreren"}
