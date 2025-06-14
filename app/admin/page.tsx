@@ -186,7 +186,7 @@ export default function AdminPage() {
                         Nieuw Product
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md">
+                    <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle>{editingProduct ? "Product Bewerken" : "Nieuw Product"}</DialogTitle>
                       </DialogHeader>
@@ -206,6 +206,7 @@ export default function AdminPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>Afbeelding</TableHead>
                       <TableHead>ID</TableHead>
                       <TableHead>Type</TableHead>
                       <TableHead>Merk</TableHead>
@@ -218,6 +219,19 @@ export default function AdminPage() {
                   <TableBody>
                     {products.map((product) => (
                       <TableRow key={product.id}>
+                        <TableCell>
+                          {product.image_url ? (
+                            <img
+                              src={product.image_url || "/placeholder.svg"}
+                              alt={`${product.brand} ${product.model}`}
+                              className="w-16 h-16 object-cover rounded-md"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+                              <span className="text-gray-400 text-xs">Geen foto</span>
+                            </div>
+                          )}
+                        </TableCell>
                         <TableCell className="font-mono text-sm">{product.id}</TableCell>
                         <TableCell className="capitalize">{product.type === "tire" ? "Band" : "Velg"}</TableCell>
                         <TableCell>{product.brand}</TableCell>
@@ -318,19 +332,68 @@ function ProductForm({
     specifications: product?.specifications || "",
     price: product?.price || 0,
     stock: product?.stock || 0,
+    image_url: product?.image_url || "",
   })
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    try {
+      setUploading(true)
+
+      const fileExt = file.name.split(".").pop()
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+      const filePath = `products/${fileName}`
+
+      const { error: uploadError } = await supabase.storage.from("product-images").upload(filePath, file)
+
+      if (uploadError) {
+        throw uploadError
+      }
+
+      const { data } = supabase.storage.from("product-images").getPublicUrl(filePath)
+
+      return data.publicUrl
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      return null
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0])
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
+      let imageUrl = formData.image_url
+
+      // Upload new image if selected
+      if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile)
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl
+        }
+      }
+
+      const productData = {
+        ...formData,
+        image_url: imageUrl,
+      }
+
       if (product) {
-        const { error } = await supabase.from("products").update(formData).eq("id", product.id)
+        const { error } = await supabase.from("products").update(productData).eq("id", product.id)
         if (error) throw error
       } else {
-        const { error } = await supabase.from("products").insert([formData])
+        const { error } = await supabase.from("products").insert([productData])
         if (error) throw error
       }
 
@@ -344,6 +407,21 @@ function ProductForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="image">Product Afbeelding</Label>
+        <div className="space-y-2">
+          {formData.image_url && (
+            <img
+              src={formData.image_url || "/placeholder.svg"}
+              alt="Product preview"
+              className="w-32 h-32 object-cover rounded-md"
+            />
+          )}
+          <Input id="image" type="file" accept="image/*" onChange={handleImageChange} />
+          {uploading && <p className="text-sm text-gray-500">Uploading...</p>}
+        </div>
+      </div>
+
       <div>
         <Label htmlFor="id">Product ID</Label>
         <Input
@@ -425,7 +503,7 @@ function ProductForm({
       </div>
 
       <div className="flex gap-2 pt-4">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading || uploading}>
           {loading ? "Opslaan..." : "Opslaan"}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>

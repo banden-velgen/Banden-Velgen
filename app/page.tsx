@@ -167,6 +167,7 @@ function ProductTable({ products, loading }: { products: Product[]; loading: boo
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Afbeelding</TableHead>
             <TableHead>ID</TableHead>
             <TableHead>Merk</TableHead>
             <TableHead>Model</TableHead>
@@ -179,6 +180,19 @@ function ProductTable({ products, loading }: { products: Product[]; loading: boo
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
+              <TableCell>
+                {product.image_url ? (
+                  <img
+                    src={product.image_url || "/placeholder.svg"}
+                    alt={`${product.brand} ${product.model}`}
+                    className="w-16 h-16 object-cover rounded-md"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">Geen foto</span>
+                  </div>
+                )}
+              </TableCell>
               <TableCell className="font-mono text-sm">{product.id}</TableCell>
               <TableCell>{product.brand}</TableCell>
               <TableCell>{product.model}</TableCell>

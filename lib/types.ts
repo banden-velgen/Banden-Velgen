@@ -16,5 +16,6 @@ export interface Product {
   specifications: string
   price: number
   stock: number
+  image_url?: string
   created_at: string
 }
