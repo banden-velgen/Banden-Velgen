@@ -299,7 +299,7 @@ export default function HomePage() {
                 <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">Autobanden en Velgen</h1>
-                  <p className="text-sm text-gray-600">Uw specialist in banden en velgen</p>
+                  <p className="text-sm text-gray-600">Nieuw of 2e hands</p>
                 </div>
               </Link>
             </div>
