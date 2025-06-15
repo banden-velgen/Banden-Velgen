@@ -25,8 +25,6 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [productToDelete, setProductToDelete] = useState<Product | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -100,13 +98,13 @@ export default function AdminPage() {
   }
 
   const handleDeleteProduct = async (id: string) => {
+    if (!confirm("Weet u zeker dat u dit product wilt verwijderen?")) return
+
     try {
       const { error } = await supabase.from("products").delete().eq("id", id)
 
       if (error) throw error
       await fetchProducts()
-      setDeleteDialogOpen(false)
-      setProductToDelete(null)
     } catch (error) {
       console.error("Error deleting product:", error)
     }
@@ -224,7 +222,6 @@ export default function AdminPage() {
                         <TableHead>Type</TableHead>
                         <TableHead>Merk</TableHead>
                         <TableHead>Model</TableHead>
-                        <TableHead>Specificaties</TableHead>
                         <TableHead>Prijs per stuk (€)</TableHead>
                         <TableHead>Voorraad</TableHead>
                         <TableHead>Acties</TableHead>
@@ -250,7 +247,6 @@ export default function AdminPage() {
                           <TableCell className="capitalize">{product.type === "tire" ? "Band" : "Velg"}</TableCell>
                           <TableCell>{product.brand}</TableCell>
                           <TableCell>{product.model}</TableCell>
-                          <TableCell>{product.specifications}</TableCell>
                           <TableCell>€{product.price.toFixed(2)}</TableCell>
                           <TableCell>{product.stock}</TableCell>
                           <TableCell>
@@ -265,14 +261,7 @@ export default function AdminPage() {
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                onClick={() => {
-                                  setProductToDelete(product)
-                                  setDeleteDialogOpen(true)
-                                }}
-                              >
+                              <Button size="sm" variant="outline" onClick={() => handleDeleteProduct(product.id)}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
@@ -334,35 +323,6 @@ export default function AdminPage() {
           </Tabs>
         </div>
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Product Verwijderen</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-gray-600">
-              Weet u zeker dat u het product <span className="font-semibold">{productToDelete?.brand} {productToDelete?.model}</span> wilt verwijderen?
-            </p>
-            <p className="text-sm text-red-600 mt-2">Deze actie kan niet ongedaan worden gemaakt.</p>
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => {
-              setDeleteDialogOpen(false)
-              setProductToDelete(null)
-            }}>
-              Annuleren
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={() => productToDelete && handleDeleteProduct(productToDelete.id)}
-            >
-              Verwijderen
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

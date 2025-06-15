@@ -498,26 +498,19 @@ function ProductTable({
           {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell>
-                <div 
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSelectedProduct(product)
-                    setShowProductDetails(true)
-                  }}
-                >
-                  {product.image_url ? (
-                    <img
-                      src={product.image_url || "/placeholder.svg"}
-                      alt={`${product.brand} ${product.model}`}
-                      className="w-16 h-16 object-cover rounded-md hover:opacity-80 transition-opacity"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center hover:bg-gray-300 transition-colors">
-                      <span className="text-gray-400 text-xs">Geen foto</span>
-                    </div>
-                  )}
-                </div>
+                {product.image_url ? (
+                  <img
+                    src={product.image_url || "/placeholder.svg"}
+                    alt={`${product.brand} ${product.model}`}
+                    className="w-16 h-16 object-cover rounded-md"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">Geen foto</span>
+                  </div>
+                )}
               </TableCell>
+              <TableCell className="font-mono text-sm">{product.id}</TableCell>
               <TableCell>{product.brand}</TableCell>
               <TableCell>{product.model}</TableCell>
               <TableCell>{product.specifications}</TableCell>
