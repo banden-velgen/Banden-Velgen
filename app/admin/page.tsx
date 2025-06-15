@@ -480,7 +480,7 @@ function ProductForm({
       </div>
 
       <div>
-        <Label htmlFor="price">Prijs (€)</Label>
+        <Label htmlFor="price">Prijs per stuk (€)</Label>
         <Input
           id="price"
           type="number"
