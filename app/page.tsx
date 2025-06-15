@@ -95,6 +95,7 @@ export default function HomePage() {
         bValue = bValue.toLowerCase()
       }
 
+      if (aValue === undefined || bValue === undefined) return 0
       if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
       if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
       return 0
@@ -358,6 +359,8 @@ export default function HomePage() {
               loading={loading}
               setSelectedProduct={setSelectedProduct}
               setShowProductDetails={setShowProductDetails}
+              setOrderFormProduct={setOrderFormProduct}
+              setShowOrderForm={setShowOrderForm}
               handleSort={handleSort}
               sortField={sortField}
               sortDirection={sortDirection}
@@ -370,6 +373,8 @@ export default function HomePage() {
               loading={loading}
               setSelectedProduct={setSelectedProduct}
               setShowProductDetails={setShowProductDetails}
+              setOrderFormProduct={setOrderFormProduct}
+              setShowOrderForm={setShowOrderForm}
               handleSort={handleSort}
               sortField={sortField}
               sortDirection={sortDirection}
@@ -412,6 +417,8 @@ function ProductTable({
   loading,
   setSelectedProduct,
   setShowProductDetails,
+  setOrderFormProduct,
+  setShowOrderForm,
   handleSort,
   sortField,
   sortDirection,
@@ -420,6 +427,8 @@ function ProductTable({
   loading: boolean
   setSelectedProduct: any
   setShowProductDetails: any
+  setOrderFormProduct: any
+  setShowOrderForm: any
   handleSort: (field: string) => void
   sortField: string
   sortDirection: "asc" | "desc"
