@@ -336,7 +336,7 @@ export default function HomePage() {
       </header>
 
       {/* Background Image */}
-      <div className="fixed inset-0 z-0 opacity-[0.08] pointer-events-none">
+      <div className="fixed inset-0 z-0 opacity-[0.15] pointer-events-none">
         <img
           src="/banner.webp"
           alt="Background"
