@@ -499,11 +499,19 @@ function ProductTable({
             <TableRow key={product.id}>
               <TableCell>
                 {product.image_url ? (
-                  <img
-                    src={product.image_url || "/placeholder.svg"}
-                    alt={`${product.brand} ${product.model}`}
-                    className="w-16 h-16 object-cover rounded-md"
-                  />
+                  <div 
+                    className="w-16 h-16 cursor-pointer"
+                    onClick={() => {
+                      setSelectedProduct(product)
+                      setShowProductDetails(true)
+                    }}
+                  >
+                    <img
+                      src={product.image_url || "/placeholder.svg"}
+                      alt={`${product.brand} ${product.model}`}
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </div>
                 ) : (
                   <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
                     <span className="text-gray-400 text-xs">Geen foto</span>
