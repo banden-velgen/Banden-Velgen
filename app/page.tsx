@@ -137,13 +137,9 @@ export default function HomePage() {
 
         {product.image_url && (
           <img
-            src={product.image_url}
+            src={product.image_url || "/placeholder.svg"}
             alt={`${product.brand} ${product.model}`}
             className="w-64 h-64 object-cover rounded-md mb-4 mx-auto"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = "/placeholder.jpg";
-            }}
           />
         )}
 
@@ -306,7 +302,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2">
                 <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
@@ -361,21 +357,21 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-8 relative">
         {/* Content */}
         <div className="relative z-10">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Producten</h2>
-            <div className="w-full sm:w-auto">
+            <div className="flex gap-4">
               <Input
                 type="text"
                 placeholder="Zoeken..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:w-64"
+                className="w-64"
               />
             </div>
           </div>
 
           <Tabs defaultValue="tire" className="space-y-6">
-            <TabsList className="w-full sm:w-auto">
+            <TabsList>
               <TabsTrigger value="tire" onClick={() => setActiveTab("tire")}>
                 Banden
               </TabsTrigger>
@@ -445,7 +441,7 @@ export default function HomePage() {
   )
 }
 
-const ProductTable = ({
+function ProductTable({
   products,
   loading,
   setSelectedProduct,
@@ -465,45 +461,42 @@ const ProductTable = ({
   handleSort: (field: string) => void
   sortField: string
   sortDirection: "asc" | "desc"
-}) => {
+}) {
   if (loading) {
     return <div className="text-center py-8">Laden...</div>
   }
 
-  if (products.length === 0) {
-    return <div className="text-center py-8">Geen producten gevonden</div>
-  }
-
   return (
-    <div className="rounded-md border overflow-x-auto">
+    <div className="border rounded-lg bg-white">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="min-w-[80px]">Afbeelding</TableHead>
-            <TableHead className="min-w-[100px]">Merk</TableHead>
-            <TableHead className="min-w-[100px]">Model</TableHead>
-            <TableHead className="min-w-[150px]">Specificaties</TableHead>
-            <TableHead 
-              onClick={() => handleSort("price")} 
-              className="cursor-pointer min-w-[120px]"
-            >
-              Prijs per stuk (€)
-              {sortField === "price" && (sortDirection === "asc" ? " ↑" : " ↓")}
+            <TableHead>Afbeelding</TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("id")}>
+              ID {sortField === "id" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead 
-              onClick={() => handleSort("stock")} 
-              className="cursor-pointer min-w-[100px]"
-            >
-              Voorraad
-              {sortField === "stock" && (sortDirection === "asc" ? " ↑" : " ↓")}
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("brand")}>
+              Merk {sortField === "brand" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead className="min-w-[100px]">Acties</TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("model")}>
+              Model {sortField === "model" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("specifications")}>
+              Specificaties {sortField === "specifications" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("price")}>
+              Prijs per stuk (€) {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("stock")}>
+              Voorraad {sortField === "stock" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead>Acties</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
-              <TableCell className="min-w-[80px]">
+              <TableCell>
                 {product.image_url ? (
                   <div 
                     className="w-16 h-16 cursor-pointer"
@@ -524,18 +517,19 @@ const ProductTable = ({
                   </div>
                 )}
               </TableCell>
-              <TableCell className="min-w-[100px]">{product.brand}</TableCell>
-              <TableCell className="min-w-[100px]">{product.model}</TableCell>
-              <TableCell className="min-w-[150px]">{product.specifications}</TableCell>
-              <TableCell className="min-w-[120px]">€{product.price.toFixed(2)}</TableCell>
-              <TableCell className="min-w-[100px]">
+              <TableCell className="font-mono text-sm">{product.id}</TableCell>
+              <TableCell>{product.brand}</TableCell>
+              <TableCell>{product.model}</TableCell>
+              <TableCell>{product.specifications}</TableCell>
+              <TableCell>€{product.price.toFixed(2)}</TableCell>
+              <TableCell>
                 {product.stock === 0 ? (
                   <span className="text-red-600 font-semibold">Uitverkocht</span>
                 ) : (
                   product.stock
                 )}
               </TableCell>
-              <TableCell className="min-w-[100px]">
+              <TableCell>
                 <div className="flex gap-2">
                   <Button
                     size="sm"
