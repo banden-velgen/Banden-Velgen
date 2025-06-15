@@ -137,9 +137,13 @@ export default function HomePage() {
 
         {product.image_url && (
           <img
-            src={product.image_url || "/placeholder.svg"}
+            src={product.image_url}
             alt={`${product.brand} ${product.model}`}
             className="w-64 h-64 object-cover rounded-md mb-4 mx-auto"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/placeholder.jpg";
+            }}
           />
         )}
 
