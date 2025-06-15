@@ -251,7 +251,13 @@ export default function AdminPage() {
                           <TableCell>{product.brand}</TableCell>
                           <TableCell>{product.model}</TableCell>
                           <TableCell>€{product.price.toFixed(2)}</TableCell>
-                          <TableCell>{product.stock}</TableCell>
+                          <TableCell>
+                            {product.stock === 0 ? (
+                              <span className="text-red-600 font-semibold">Uitverkocht</span>
+                            ) : (
+                              product.stock
+                            )}
+                          </TableCell>
                           <TableCell>
                             {product.status === 'Nieuw' ? (
                               <span className="px-2 py-1 rounded text-white" style={{background:'#2c5765'}}>Nieuw</span>
