@@ -74,11 +74,11 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <main className="flex-grow">
+      <body className={`${inter.className} min-h-screen flex flex-col relative`}>
+        <main className="flex-grow pb-16">
           {children}
         </main>
-        <footer className="w-full py-4 text-center text-sm text-gray-600 bg-white border-t">
+        <footer className="w-full py-4 text-center text-sm text-gray-600 bg-white border-t fixed bottom-0 left-0 right-0 md:relative">
           Banden.autos © 2025
         </footer>
       </body>
