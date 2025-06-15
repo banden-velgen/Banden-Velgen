@@ -164,14 +164,24 @@ export default function HomePage() {
           </p>
           <p>
             <strong>Voorraad:</strong>{" "}
-            <span className={product.stock < 10 ? "text-red-600 font-semibold" : ""}>{product.stock}</span>
+            {product.stock === 0 ? (
+              <span className="text-red-600 font-semibold">Uitverkocht</span>
+            ) : (
+              product.stock
+            )}
           </p>
         </div>
 
         <div className="flex gap-2">
-          <Button onClick={onOrder} className="flex-1">
-            Bestellen
-          </Button>
+          {product.stock > 0 ? (
+            <Button onClick={onOrder} className="flex-1">
+              Bestellen
+            </Button>
+          ) : (
+            <div className="flex-1 text-center py-2 px-4 bg-gray-100 rounded-md">
+              <span className="text-red-600 font-semibold">Uitverkocht</span>
+            </div>
+          )}
           <Button variant="outline" onClick={onClose}>
             Sluiten
           </Button>
