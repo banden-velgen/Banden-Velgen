@@ -496,7 +496,8 @@ function ProductTable({
                     variant="outline"
                     onClick={() => {
                       setSelectedProduct(product)
-                      window.location.href = "/order" // Redirect to order page
+                      setOrderFormProduct(product)
+                      setShowOrderForm(true)
                     }}
                   >
                     <ShoppingCart className="h-4 w-4" />
