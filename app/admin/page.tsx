@@ -166,17 +166,17 @@ export default function AdminPage() {
         </div>
       </header>
 
+      {/* Background Image */}
+      <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none">
+        <img
+          src="/banner.webp"
+          alt="Background"
+          className="w-full h-full object-cover blur-[2px]"
+        />
+      </div>
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 relative">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
-          <img
-            src="/banner.webp"
-            alt="Background"
-            className="w-full h-full object-cover blur-[2px]"
-          />
-        </div>
-
         {/* Content */}
         <div className="relative z-10">
           <Tabs defaultValue="products" className="space-y-6">
