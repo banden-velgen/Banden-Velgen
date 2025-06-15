@@ -294,25 +294,19 @@ export default function HomePage() {
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Autobanden en Velgen</h1>
-                <p className="text-sm text-gray-600">Nieuw of 2e hands</p>
-              </div>
+            <div className="flex items-center gap-4">
+              <Link href="/" className="flex items-center gap-2">
+                <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Autobanden en Velgen</h1>
+                  <p className="text-sm text-gray-600">Uw specialist in banden en velgen</p>
+                </div>
+              </Link>
             </div>
 
             <div className="flex items-center gap-4">
               {user ? (
                 <>
-                  {profile?.role === "admin" && (
-                    <Link href="/admin">
-                      <Button variant="outline">
-                        <Settings className="h-4 w-4 mr-2" />
-                        Admin Dashboard
-                      </Button>
-                    </Link>
-                  )}
                   <span className="text-sm text-gray-600">Welkom, {user.email}</span>
                   <Button onClick={handleSignOut} variant="outline">
                     Uitloggen
@@ -334,54 +328,72 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "tire" | "rim")}>
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="tire">Autobanden</TabsTrigger>
-            <TabsTrigger value="rim">Velgen</TabsTrigger>
-          </TabsList>
+      <div className="container mx-auto px-4 py-8 relative">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
+          <img
+            src="/banner.webp"
+            alt="Background"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-          <div className="mb-6 flex gap-2 items-center">
-            <Input
-              placeholder="Zoeken..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
-            />
-            <Button variant="outline" onClick={() => setSearchTerm("")} disabled={!searchTerm}>
-              Reset
-            </Button>
+        {/* Content */}
+        <div className="relative z-10">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">Producten</h2>
+            <div className="flex gap-4">
+              <Input
+                type="text"
+                placeholder="Zoeken..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-64"
+              />
+            </div>
           </div>
 
-          <TabsContent value="tire">
-            <ProductTable
-              products={filteredProducts}
-              loading={loading}
-              setSelectedProduct={setSelectedProduct}
-              setShowProductDetails={setShowProductDetails}
-              setOrderFormProduct={setOrderFormProduct}
-              setShowOrderForm={setShowOrderForm}
-              handleSort={handleSort}
-              sortField={sortField}
-              sortDirection={sortDirection}
-            />
-          </TabsContent>
+          <Tabs defaultValue="tire" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="tire" onClick={() => setActiveTab("tire")}>
+                Banden
+              </TabsTrigger>
+              <TabsTrigger value="rim" onClick={() => setActiveTab("rim")}>
+                Velgen
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="rim">
-            <ProductTable
-              products={filteredProducts}
-              loading={loading}
-              setSelectedProduct={setSelectedProduct}
-              setShowProductDetails={setShowProductDetails}
-              setOrderFormProduct={setOrderFormProduct}
-              setShowOrderForm={setShowOrderForm}
-              handleSort={handleSort}
-              sortField={sortField}
-              sortDirection={sortDirection}
-            />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="tire">
+              <ProductTable
+                products={filteredProducts}
+                loading={loading}
+                setSelectedProduct={setSelectedProduct}
+                setShowProductDetails={setShowProductDetails}
+                setOrderFormProduct={setOrderFormProduct}
+                setShowOrderForm={setShowOrderForm}
+                handleSort={handleSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+              />
+            </TabsContent>
+
+            <TabsContent value="rim">
+              <ProductTable
+                products={filteredProducts}
+                loading={loading}
+                setSelectedProduct={setSelectedProduct}
+                setShowProductDetails={setShowProductDetails}
+                setOrderFormProduct={setOrderFormProduct}
+                setShowOrderForm={setShowOrderForm}
+                handleSort={handleSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
+
       {/* Popups */}
       {showProductDetails && selectedProduct && (
         <ProductDetailsPopup

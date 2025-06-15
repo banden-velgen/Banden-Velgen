@@ -167,149 +167,161 @@ export default function AdminPage() {
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="products">Product Beheer</TabsTrigger>
-            <TabsTrigger value="users">Gebruiker Beheer</TabsTrigger>
-          </TabsList>
+      <div className="container mx-auto px-4 py-8 relative">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
+          <img
+            src="/banner.webp"
+            alt="Background"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-          <TabsContent value="products">
-            <Card>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>Product Beheer</CardTitle>
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button onClick={() => setEditingProduct(null)}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Nieuw Product
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>{editingProduct ? "Product Bewerken" : "Nieuw Product"}</DialogTitle>
-                      </DialogHeader>
-                      <ProductForm
-                        product={editingProduct}
-                        onSave={() => {
-                          setIsDialogOpen(false)
-                          fetchProducts()
-                        }}
-                        onCancel={() => setIsDialogOpen(false)}
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Afbeelding</TableHead>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Merk</TableHead>
-                      <TableHead>Model</TableHead>
-                      <TableHead>Prijs per stuk (€)</TableHead>
-                      <TableHead>Voorraad</TableHead>
-                      <TableHead>Acties</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {products.map((product) => (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          {product.image_url ? (
-                            <img
-                              src={product.image_url || "/placeholder.svg"}
-                              alt={`${product.brand} ${product.model}`}
-                              className="w-16 h-16 object-cover rounded-md"
-                            />
-                          ) : (
-                            <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
-                              <span className="text-gray-400 text-xs">Geen foto</span>
+        {/* Content */}
+        <div className="relative z-10">
+          <Tabs defaultValue="products" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="products">Product Beheer</TabsTrigger>
+              <TabsTrigger value="users">Gebruiker Beheer</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="products">
+              <Card>
+                <CardHeader>
+                  <div className="flex justify-between items-center">
+                    <CardTitle>Product Beheer</CardTitle>
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button onClick={() => setEditingProduct(null)}>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Nieuw Product
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>{editingProduct ? "Product Bewerken" : "Nieuw Product"}</DialogTitle>
+                        </DialogHeader>
+                        <ProductForm
+                          product={editingProduct}
+                          onSave={() => {
+                            setIsDialogOpen(false)
+                            fetchProducts()
+                          }}
+                          onCancel={() => setIsDialogOpen(false)}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Afbeelding</TableHead>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Merk</TableHead>
+                        <TableHead>Model</TableHead>
+                        <TableHead>Prijs per stuk (€)</TableHead>
+                        <TableHead>Voorraad</TableHead>
+                        <TableHead>Acties</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {products.map((product) => (
+                        <TableRow key={product.id}>
+                          <TableCell>
+                            {product.image_url ? (
+                              <img
+                                src={product.image_url || "/placeholder.svg"}
+                                alt={`${product.brand} ${product.model}`}
+                                className="w-16 h-16 object-cover rounded-md"
+                              />
+                            ) : (
+                              <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+                                <span className="text-gray-400 text-xs">Geen foto</span>
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-mono text-sm">{product.id}</TableCell>
+                          <TableCell className="capitalize">{product.type === "tire" ? "Band" : "Velg"}</TableCell>
+                          <TableCell>{product.brand}</TableCell>
+                          <TableCell>{product.model}</TableCell>
+                          <TableCell>€{product.price.toFixed(2)}</TableCell>
+                          <TableCell>{product.stock}</TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingProduct(product)
+                                  setIsDialogOpen(true)
+                                }}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => handleDeleteProduct(product.id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
-                          )}
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">{product.id}</TableCell>
-                        <TableCell className="capitalize">{product.type === "tire" ? "Band" : "Velg"}</TableCell>
-                        <TableCell>{product.brand}</TableCell>
-                        <TableCell>{product.model}</TableCell>
-                        <TableCell>€{product.price.toFixed(2)}</TableCell>
-                        <TableCell>{product.stock}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setEditingProduct(product)
-                                setIsDialogOpen(true)
-                              }}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="outline" onClick={() => handleDeleteProduct(product.id)}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gebruiker Beheer</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>E-mail</TableHead>
-                      <TableHead>Rol</TableHead>
-                      <TableHead>Aangemaakt</TableHead>
-                      <TableHead>Acties</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {profiles.map((profile) => (
-                      <TableRow key={profile.id}>
-                        <TableCell>{profile.email}</TableCell>
-                        <TableCell>
-                          <Badge variant={profile.role === "admin" ? "default" : "secondary"}>
-                            {profile.role === "admin" ? "Admin" : "Koper"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{new Date(profile.created_at).toLocaleDateString("nl-NL")}</TableCell>
-                        <TableCell>
-                          <Select
-                            value={profile.role}
-                            onValueChange={(value: "admin" | "buyer") => updateUserRole(profile.id, value)}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="buyer">Koper</SelectItem>
-                              <SelectItem value="admin">Admin</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
+            <TabsContent value="users">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gebruiker Beheer</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>E-mail</TableHead>
+                        <TableHead>Rol</TableHead>
+                        <TableHead>Aangemaakt</TableHead>
+                        <TableHead>Acties</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                    </TableHeader>
+                    <TableBody>
+                      {profiles.map((profile) => (
+                        <TableRow key={profile.id}>
+                          <TableCell>{profile.email}</TableCell>
+                          <TableCell>
+                            <Badge variant={profile.role === "admin" ? "default" : "secondary"}>
+                              {profile.role === "admin" ? "Admin" : "Koper"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{new Date(profile.created_at).toLocaleDateString("nl-NL")}</TableCell>
+                          <TableCell>
+                            <Select
+                              value={profile.role}
+                              onValueChange={(value: "admin" | "buyer") => updateUserRole(profile.id, value)}
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="buyer">Koper</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   )
