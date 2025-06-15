@@ -123,8 +123,8 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="flex items-center justify-center gap-2 mb-4">
+        <div className="mb-8">
+          <Link href="/" className="flex items-center gap-2 mb-4">
             <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
             <div>
               <h1 className="text-xl font-bold text-gray-900">Autobanden en Velgen</h1>
