@@ -126,8 +126,8 @@ export default function HomePage() {
     onClose,
     onOrder,
   }: { product: Product; onClose: () => void; onOrder: () => void }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Product Details</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -498,26 +498,19 @@ function ProductTable({
           {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell>
-                <div 
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSelectedProduct(product)
-                    setShowProductDetails(true)
-                  }}
-                >
-                  {product.image_url ? (
-                    <img
-                      src={product.image_url || "/placeholder.svg"}
-                      alt={`${product.brand} ${product.model}`}
-                      className="w-16 h-16 object-cover rounded-md hover:opacity-80 transition-opacity"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center hover:bg-gray-300 transition-colors">
-                      <span className="text-gray-400 text-xs">Geen foto</span>
-                    </div>
-                  )}
-                </div>
+                {product.image_url ? (
+                  <img
+                    src={product.image_url || "/placeholder.svg"}
+                    alt={`${product.brand} ${product.model}`}
+                    className="w-16 h-16 object-cover rounded-md"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">Geen foto</span>
+                  </div>
+                )}
               </TableCell>
+              <TableCell className="font-mono text-sm">{product.id}</TableCell>
               <TableCell>{product.brand}</TableCell>
               <TableCell>{product.model}</TableCell>
               <TableCell>{product.specifications}</TableCell>
