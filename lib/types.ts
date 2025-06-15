@@ -1,5 +1,5 @@
 export type UserRole = "admin" | "buyer"
-export type ProductType = "tire" | "rim"
+export type ProductType = "tire" | "rim" | "Band+Velg" | "Set"
 
 export interface Profile {
   id: string

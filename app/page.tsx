@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase/client"
-import type { Product, Profile } from "@/lib/types"
+import type { Product, Profile, ProductType } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -16,7 +16,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [activeTab, setActiveTab] = useState<"tire" | "rim">("tire")
+  const [activeTab, setActiveTab] = useState<ProductType>("tire")
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
@@ -381,12 +381,10 @@ export default function HomePage() {
 
           <Tabs defaultValue="tire" className="space-y-6">
             <TabsList>
-              <TabsTrigger value="tire" onClick={() => setActiveTab("tire")}>
-                Banden
-              </TabsTrigger>
-              <TabsTrigger value="rim" onClick={() => setActiveTab("rim")}>
-                Velgen
-              </TabsTrigger>
+              <TabsTrigger value="tire" onClick={() => setActiveTab("tire")}>Banden</TabsTrigger>
+              <TabsTrigger value="rim" onClick={() => setActiveTab("rim")}>Velgen</TabsTrigger>
+              <TabsTrigger value="Band+Velg" onClick={() => setActiveTab("Band+Velg")}>Band+Velg</TabsTrigger>
+              <TabsTrigger value="Set" onClick={() => setActiveTab("Set")}>Sets</TabsTrigger>
             </TabsList>
 
             <TabsContent value="tire">
@@ -404,6 +402,34 @@ export default function HomePage() {
             </TabsContent>
 
             <TabsContent value="rim">
+              <ProductTable
+                products={filteredProducts}
+                loading={loading}
+                setSelectedProduct={setSelectedProduct}
+                setShowProductDetails={setShowProductDetails}
+                setOrderFormProduct={setOrderFormProduct}
+                setShowOrderForm={setShowOrderForm}
+                handleSort={handleSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+              />
+            </TabsContent>
+
+            <TabsContent value="Band+Velg">
+              <ProductTable
+                products={filteredProducts}
+                loading={loading}
+                setSelectedProduct={setSelectedProduct}
+                setShowProductDetails={setShowProductDetails}
+                setOrderFormProduct={setOrderFormProduct}
+                setShowOrderForm={setShowOrderForm}
+                handleSort={handleSort}
+                sortField={sortField}
+                sortDirection={sortDirection}
+              />
+            </TabsContent>
+
+            <TabsContent value="Set">
               <ProductTable
                 products={filteredProducts}
                 loading={loading}
