@@ -160,7 +160,7 @@ export default function HomePage() {
             <strong>Specificaties:</strong> {product.specifications}
           </p>
           <p>
-            <strong>Prijs:</strong> €{product.price.toFixed(2)}
+            <strong>Prijs:</strong> € {product.price.toFixed(2)}
           </p>
           <p>
             <strong>Voorraad:</strong>{" "}
@@ -227,7 +227,7 @@ export default function HomePage() {
               {product.brand} {product.model}
             </p>
             <p className="text-sm text-gray-600">{product.specifications}</p>
-            <p className="text-sm">€{product.price.toFixed(2)}</p>
+            <p className="text-sm">€ {product.price.toFixed(2)}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -522,7 +522,7 @@ function ProductTable({
               <TableCell>{product.brand}</TableCell>
               <TableCell>{product.model}</TableCell>
               <TableCell>{product.specifications}</TableCell>
-              <TableCell>€{product.price.toFixed(2)}</TableCell>
+              <TableCell>€ {product.price.toFixed(2)}</TableCell>
               <TableCell>
                 {product.stock === 0 ? (
                   <span className="text-red-600 font-semibold">Uitverkocht</span>
