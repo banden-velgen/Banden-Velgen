@@ -307,6 +307,14 @@ export default function HomePage() {
             <div className="flex items-center gap-4">
               {user ? (
                 <>
+                  {profile?.role === "admin" && (
+                    <Link href="/admin">
+                      <Button variant="outline">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Admin Dashboard
+                      </Button>
+                    </Link>
+                  )}
                   <span className="text-sm text-gray-600">Welkom, {user.email}</span>
                   <Button onClick={handleSignOut} variant="outline">
                     Uitloggen
