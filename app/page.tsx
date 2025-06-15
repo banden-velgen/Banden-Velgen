@@ -456,7 +456,7 @@ function ProductTable({
               Specificaties {sortField === "specifications" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
             <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("price")}>
-              Prijs (€) {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
+              Prijs per stuk (€) {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
             <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("stock")}>
               Voorraad {sortField === "stock" && (sortDirection === "asc" ? "↑" : "↓")}
