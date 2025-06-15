@@ -58,7 +58,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="flex items-center justify-center gap-2 mb-4">
-            <Car className="h-8 w-8 text-red-600" />
+            <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
             <div>
               <h1 className="text-xl font-bold text-gray-900">Autobanden en Velgen</h1>
               <p className="text-sm text-gray-600">Nieuw of 2e hands</p>
