@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, Home } from "lucide-react"
+import { Plus, Edit, Trash2, Home, Eye } from "lucide-react"
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
@@ -25,6 +25,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [showProductDetails, setShowProductDetails] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -98,13 +102,13 @@ export default function AdminPage() {
   }
 
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm("Weet u zeker dat u dit product wilt verwijderen?")) return
-
     try {
       const { error } = await supabase.from("products").delete().eq("id", id)
 
       if (error) throw error
       await fetchProducts()
+      setDeleteDialogOpen(false)
+      setProductToDelete(null)
     } catch (error) {
       console.error("Error deleting product:", error)
     }
@@ -129,6 +133,65 @@ export default function AdminPage() {
       console.error("Error signing out:", error)
     }
   }
+
+  const ProductDetailsPopup = ({
+    product,
+    onClose,
+  }: { product: Product; onClose: () => void }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Product Details</h2>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            ×
+          </Button>
+        </div>
+
+        {product.image_url && (
+          <img
+            src={product.image_url || "/placeholder.svg"}
+            alt={`${product.brand} ${product.model}`}
+            className="w-64 h-64 object-cover rounded-md mb-4 mx-auto"
+          />
+        )}
+
+        <div className="space-y-2 mb-6">
+          <p>
+            <strong>ID:</strong> {product.id}
+          </p>
+          <p>
+            <strong>Type:</strong> {product.type === "tire" ? "Band" : "Velg"}
+          </p>
+          <p>
+            <strong>Merk:</strong> {product.brand}
+          </p>
+          <p>
+            <strong>Model:</strong> {product.model}
+          </p>
+          <p>
+            <strong>Specificaties:</strong> {product.specifications}
+          </p>
+          <p>
+            <strong>Prijs:</strong> €{product.price.toFixed(2)}
+          </p>
+          <p>
+            <strong>Voorraad:</strong>{" "}
+            {product.stock === 0 ? (
+              <span className="text-red-600 font-semibold">Uitverkocht</span>
+            ) : (
+              product.stock
+            )}
+          </p>
+        </div>
+
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={onClose}>
+            Sluiten
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
 
   if (loading) {
     return <div className="text-center py-8">Laden...</div>
@@ -222,6 +285,7 @@ export default function AdminPage() {
                         <TableHead>Type</TableHead>
                         <TableHead>Merk</TableHead>
                         <TableHead>Model</TableHead>
+                        <TableHead>Specificaties</TableHead>
                         <TableHead>Prijs per stuk (€)</TableHead>
                         <TableHead>Voorraad</TableHead>
                         <TableHead>Acties</TableHead>
@@ -231,26 +295,45 @@ export default function AdminPage() {
                       {products.map((product) => (
                         <TableRow key={product.id}>
                           <TableCell>
-                            {product.image_url ? (
-                              <img
-                                src={product.image_url || "/placeholder.svg"}
-                                alt={`${product.brand} ${product.model}`}
-                                className="w-16 h-16 object-cover rounded-md"
-                              />
-                            ) : (
-                              <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
-                                <span className="text-gray-400 text-xs">Geen foto</span>
-                              </div>
-                            )}
+                            <div 
+                              className="cursor-pointer"
+                              onClick={() => {
+                                setSelectedProduct(product)
+                                setShowProductDetails(true)
+                              }}
+                            >
+                              {product.image_url ? (
+                                <img
+                                  src={product.image_url || "/placeholder.svg"}
+                                  alt={`${product.brand} ${product.model}`}
+                                  className="w-16 h-16 object-cover rounded-md hover:opacity-80 transition-opacity"
+                                />
+                              ) : (
+                                <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                  <span className="text-gray-400 text-xs">Geen foto</span>
+                                </div>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell className="font-mono text-sm">{product.id}</TableCell>
                           <TableCell className="capitalize">{product.type === "tire" ? "Band" : "Velg"}</TableCell>
                           <TableCell>{product.brand}</TableCell>
                           <TableCell>{product.model}</TableCell>
+                          <TableCell>{product.specifications}</TableCell>
                           <TableCell>€{product.price.toFixed(2)}</TableCell>
                           <TableCell>{product.stock}</TableCell>
                           <TableCell>
                             <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedProduct(product)
+                                  setShowProductDetails(true)
+                                }}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
                               <Button
                                 size="sm"
                                 variant="outline"
@@ -261,7 +344,14 @@ export default function AdminPage() {
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button size="sm" variant="outline" onClick={() => handleDeleteProduct(product.id)}>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => {
+                                  setProductToDelete(product)
+                                  setDeleteDialogOpen(true)
+                                }}
+                              >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
@@ -323,6 +413,46 @@ export default function AdminPage() {
           </Tabs>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Product Verwijderen</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-600">
+              Weet u zeker dat u het product <span className="font-semibold">{productToDelete?.brand} {productToDelete?.model}</span> wilt verwijderen?
+            </p>
+            <p className="text-sm text-red-600 mt-2">Deze actie kan niet ongedaan worden gemaakt.</p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => {
+              setDeleteDialogOpen(false)
+              setProductToDelete(null)
+            }}>
+              Annuleren
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => productToDelete && handleDeleteProduct(productToDelete.id)}
+            >
+              Verwijderen
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Product Details Popup */}
+      {showProductDetails && selectedProduct && (
+        <ProductDetailsPopup
+          product={selectedProduct}
+          onClose={() => {
+            setShowProductDetails(false)
+            setSelectedProduct(null)
+          }}
+        />
+      )}
     </div>
   )
 }
