@@ -522,7 +522,11 @@ function ProductTable({
               <TableCell>{product.brand}</TableCell>
               <TableCell>{product.model}</TableCell>
               <TableCell>{product.specifications}</TableCell>
-              <TableCell>€ {product.price.toFixed(2).replace('.', ',')}</TableCell>
+              <TableCell>
+                <span className={product.stock === 0 ? "blur-sm select-none" : ""}>
+                  € {product.price.toFixed(2).replace('.', ',')}
+                </span>
+              </TableCell>
               <TableCell>
                 {product.stock === 0 ? (
                   <span className="text-red-600 font-semibold">Uitverkocht</span>
