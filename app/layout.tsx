@@ -74,8 +74,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} min-h-screen flex flex-col justify-between`}>
-        <main>
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
+        <main className="flex-grow flex flex-col items-center justify-center">
           {children}
         </main>
         <footer className="w-full py-4 text-center text-sm text-gray-600 bg-white border-t">
