@@ -224,7 +224,7 @@ export default function AdminPage() {
                         <TableHead>Type</TableHead>
                         <TableHead>Merk</TableHead>
                         <TableHead>Model</TableHead>
-                        <TableHead>Prijs per stuk (€)</TableHead>
+                        <TableHead>Prijs per stuk</TableHead>
                         <TableHead>Voorraad</TableHead>
                         <TableHead>Acties</TableHead>
                       </TableRow>
@@ -530,7 +530,7 @@ function ProductForm({
       </div>
 
       <div>
-        <Label htmlFor="price">Prijs per stuk (€)</Label>
+        <Label htmlFor="price">Prijs per stuk</Label>
         <Input
           id="price"
           type="number"
