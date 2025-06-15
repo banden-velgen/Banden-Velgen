@@ -432,7 +432,7 @@ export default function HomePage() {
   )
 }
 
-const ProductTable = ({
+function ProductTable({
   products,
   loading,
   setSelectedProduct,
@@ -452,31 +452,34 @@ const ProductTable = ({
   handleSort: (field: string) => void
   sortField: string
   sortDirection: "asc" | "desc"
-}) => {
+}) {
   if (loading) {
     return <div className="text-center py-8">Laden...</div>
   }
 
-  if (products.length === 0) {
-    return <div className="text-center py-8">Geen producten gevonden</div>
-  }
-
   return (
-    <div className="rounded-md border">
+    <div className="border rounded-lg bg-white">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Afbeelding</TableHead>
-            <TableHead>Merk</TableHead>
-            <TableHead>Model</TableHead>
-            <TableHead>Specificaties</TableHead>
-            <TableHead onClick={() => handleSort("price")} className="cursor-pointer">
-              Prijs per stuk (€)
-              {sortField === "price" && (sortDirection === "asc" ? " ↑" : " ↓")}
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("id")}>
+              ID {sortField === "id" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead onClick={() => handleSort("stock")} className="cursor-pointer">
-              Voorraad
-              {sortField === "stock" && (sortDirection === "asc" ? " ↑" : " ↓")}
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("brand")}>
+              Merk {sortField === "brand" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("model")}>
+              Model {sortField === "model" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("specifications")}>
+              Specificaties {sortField === "specifications" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("price")}>
+              Prijs per stuk (€) {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("stock")}>
+              Voorraad {sortField === "stock" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
             <TableHead>Acties</TableHead>
           </TableRow>
@@ -497,16 +500,13 @@ const ProductTable = ({
                   </div>
                 )}
               </TableCell>
+              <TableCell className="font-mono text-sm">{product.id}</TableCell>
               <TableCell>{product.brand}</TableCell>
               <TableCell>{product.model}</TableCell>
               <TableCell>{product.specifications}</TableCell>
               <TableCell>€{product.price.toFixed(2)}</TableCell>
               <TableCell>
-                {product.stock === 0 ? (
-                  <span className="text-red-600 font-semibold">Uitverkocht</span>
-                ) : (
-                  product.stock
-                )}
+                <span className={product.stock < 10 ? "text-red-600 font-semibold" : ""}>{product.stock}</span>
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">
@@ -520,18 +520,17 @@ const ProductTable = ({
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  {product.stock > 0 && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setOrderFormProduct(product)
-                        setShowOrderForm(true)
-                      }}
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                    </Button>
-                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedProduct(product)
+                      setOrderFormProduct(product)
+                      setShowOrderForm(true)
+                    }}
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
