@@ -330,11 +330,11 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 relative">
         {/* Background Image */}
-        <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
+        <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
           <img
             src="/banner.webp"
             alt="Background"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover blur-[2px]"
           />
         </div>
 
