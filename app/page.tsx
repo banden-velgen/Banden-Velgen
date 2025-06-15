@@ -303,7 +303,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link href="/" className="flex items-center gap-2">
                 <img src="/logo.png" alt="Autobanden en Velgen" className="h-14 w-18" />
@@ -313,32 +313,32 @@ export default function HomePage() {
                 </div>
               </Link>
             </div>
-
             <div className="flex items-center gap-4">
               {user ? (
-                <>
+                <div className="flex items-center gap-4">
                   {profile?.role === "admin" && (
                     <Link href="/admin">
-                      <Button variant="outline">
+                      <Button variant="outline" size="sm">
                         <Settings className="h-4 w-4 mr-2" />
-                        Admin Dashboard
+                        Admin
                       </Button>
                     </Link>
                   )}
-                  <span className="text-sm text-gray-600">Welkom, {user.email}</span>
-                  <Button onClick={handleSignOut} variant="outline">
+                  <Button variant="outline" size="sm" onClick={handleSignOut}>
                     Uitloggen
                   </Button>
-                </>
+                </div>
               ) : (
-                <>
+                <div className="flex items-center gap-4">
                   <Link href="/login">
-                    <Button variant="outline">Inloggen</Button>
+                    <Button variant="outline" size="sm">
+                      Inloggen
+                    </Button>
                   </Link>
                   <Link href="/register">
-                    <Button>Registreren</Button>
+                    <Button size="sm">Registreren</Button>
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -468,30 +468,30 @@ function ProductTable({
   }
 
   return (
-    <div className="border rounded-lg bg-white">
+    <div className="border rounded-lg bg-white overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Afbeelding</TableHead>
-            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("id")}>
+            <TableHead className="min-w-[80px]">Afbeelding</TableHead>
+            <TableHead className="min-w-[100px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("id")}>
               ID {sortField === "id" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("brand")}>
+            <TableHead className="min-w-[120px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("brand")}>
               Merk {sortField === "brand" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("model")}>
+            <TableHead className="min-w-[120px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("model")}>
               Model {sortField === "model" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("specifications")}>
+            <TableHead className="min-w-[150px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("specifications")}>
               Specificaties {sortField === "specifications" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("price")}>
+            <TableHead className="min-w-[120px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("price")}>
               Prijs per stuk (€) {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("stock")}>
+            <TableHead className="min-w-[100px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("stock")}>
               Voorraad {sortField === "stock" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
-            <TableHead>Acties</TableHead>
+            <TableHead className="min-w-[100px]">Acties</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
