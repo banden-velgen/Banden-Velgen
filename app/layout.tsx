@@ -26,6 +26,54 @@ export default function RootLayout({
 }) {
   return (
     <html lang="nl">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                alert('Banden.autos © 2025');
+                return false;
+              });
+              
+              document.addEventListener('keydown', function(e) {
+                // Prevent Ctrl+U (View Source)
+                if (e.ctrlKey && e.key === 'u') {
+                  e.preventDefault();
+                  return false;
+                }
+                // Prevent Ctrl+Shift+I (Developer Tools)
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                  e.preventDefault();
+                  return false;
+                }
+                // Prevent Ctrl+Shift+J (Developer Tools)
+                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                  e.preventDefault();
+                  return false;
+                }
+                // Prevent Ctrl+S (Save Page)
+                if (e.ctrlKey && e.key === 's') {
+                  e.preventDefault();
+                  return false;
+                }
+              });
+
+              // Prevent text selection
+              document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+              });
+
+              // Prevent drag and drop
+              document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+              });
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   )
