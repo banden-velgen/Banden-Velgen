@@ -211,7 +211,7 @@ export default function AdminPage() {
                       <TableHead>Type</TableHead>
                       <TableHead>Merk</TableHead>
                       <TableHead>Model</TableHead>
-                      <TableHead>Prijs</TableHead>
+                      <TableHead>Prijs per stuk (€)</TableHead>
                       <TableHead>Voorraad</TableHead>
                       <TableHead>Acties</TableHead>
                     </TableRow>
