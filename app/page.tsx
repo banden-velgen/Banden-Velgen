@@ -506,7 +506,11 @@ function ProductTable({
               <TableCell>{product.specifications}</TableCell>
               <TableCell>€{product.price.toFixed(2)}</TableCell>
               <TableCell>
-                <span className={product.stock < 10 ? "text-red-600 font-semibold" : ""}>{product.stock}</span>
+                {product.stock === 0 ? (
+                  <span className="text-red-600 font-semibold">Uitverkocht</span>
+                ) : (
+                  product.stock
+                )}
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">
@@ -520,17 +524,18 @@ function ProductTable({
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedProduct(product)
-                      setOrderFormProduct(product)
-                      setShowOrderForm(true)
-                    }}
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                  </Button>
+                  {product.stock > 0 && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setOrderFormProduct(product)
+                        setShowOrderForm(true)
+                      }}
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
