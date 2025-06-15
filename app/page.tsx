@@ -1,5 +1,6 @@
 "use client"
 
+import type React from "react"
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase/client"
 import type { Product, Profile } from "@/lib/types"
@@ -9,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Settings, Eye, ShoppingCart } from "lucide-react"
 import Link from "next/link"
+import { Label } from "@/components/ui/label"
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -18,6 +20,12 @@ export default function HomePage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [showProductDetails, setShowProductDetails] = useState(false)
+  const [showOrderForm, setShowOrderForm] = useState(false)
+  const [orderFormProduct, setOrderFormProduct] = useState<Product | null>(null)
+  const [sortField, setSortField] = useState<string>("")
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
   useEffect(() => {
     fetchProducts()
@@ -26,7 +34,7 @@ export default function HomePage() {
 
   useEffect(() => {
     filterProducts()
-  }, [products, searchTerm, activeTab])
+  }, [products, searchTerm, activeTab, sortField, sortDirection])
 
   const checkUser = async () => {
     try {
@@ -69,7 +77,37 @@ export default function HomePage() {
       )
     }
 
+    // Apply sorting
+    filtered = sortProducts(filtered)
     setFilteredProducts(filtered)
+  }
+
+  const sortProducts = (products: Product[]) => {
+    if (!sortField) return products
+
+    return [...products].sort((a, b) => {
+      let aValue = a[sortField as keyof Product]
+      let bValue = b[sortField as keyof Product]
+
+      // Handle different data types
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        aValue = aValue.toLowerCase()
+        bValue = bValue.toLowerCase()
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
+      return 0
+    })
+  }
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+    } else {
+      setSortField(field)
+      setSortDirection("asc")
+    }
   }
 
   const handleSignOut = async () => {
@@ -80,6 +118,173 @@ export default function HomePage() {
     } catch (error) {
       console.error("Error signing out:", error)
     }
+  }
+
+  const ProductDetailsPopup = ({
+    product,
+    onClose,
+    onOrder,
+  }: { product: Product; onClose: () => void; onOrder: () => void }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Product Details</h2>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            ×
+          </Button>
+        </div>
+
+        {product.image_url && (
+          <img
+            src={product.image_url || "/placeholder.svg"}
+            alt={`${product.brand} ${product.model}`}
+            className="w-64 h-64 object-cover rounded-md mb-4 mx-auto"
+          />
+        )}
+
+        <div className="space-y-2 mb-6">
+          <p>
+            <strong>ID:</strong> {product.id}
+          </p>
+          <p>
+            <strong>Type:</strong> {product.type === "tire" ? "Band" : "Velg"}
+          </p>
+          <p>
+            <strong>Merk:</strong> {product.brand}
+          </p>
+          <p>
+            <strong>Model:</strong> {product.model}
+          </p>
+          <p>
+            <strong>Specificaties:</strong> {product.specifications}
+          </p>
+          <p>
+            <strong>Prijs:</strong> €{product.price.toFixed(2)}
+          </p>
+          <p>
+            <strong>Voorraad:</strong>{" "}
+            <span className={product.stock < 10 ? "text-red-600 font-semibold" : ""}>{product.stock}</span>
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          <Button onClick={onOrder} className="flex-1">
+            Bestellen
+          </Button>
+          <Button variant="outline" onClick={onClose}>
+            Sluiten
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+
+  const OrderFormPopup = ({ product, onClose }: { product: Product; onClose: () => void }) => {
+    const [orderData, setOrderData] = useState({
+      name: "",
+      email: "",
+      phone: "",
+      quantity: 1,
+      message: "",
+    })
+    const [submitting, setSubmitting] = useState(false)
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault()
+      setSubmitting(true)
+
+      // Simulate order submission
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      alert(`Bestelling verzonden voor ${product.brand} ${product.model}!`)
+      setSubmitting(false)
+      onClose()
+    }
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">Bestelling Plaatsen</h2>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              ×
+            </Button>
+          </div>
+
+          <div className="mb-4 p-3 bg-gray-50 rounded-md">
+            <p className="font-semibold">
+              {product.brand} {product.model}
+            </p>
+            <p className="text-sm text-gray-600">{product.specifications}</p>
+            <p className="text-sm">€{product.price.toFixed(2)}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="name">Naam *</Label>
+              <Input
+                id="name"
+                value={orderData.name}
+                onChange={(e) => setOrderData({ ...orderData, name: e.target.value })}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="email">E-mail *</Label>
+              <Input
+                id="email"
+                type="email"
+                value={orderData.email}
+                onChange={(e) => setOrderData({ ...orderData, email: e.target.value })}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="phone">Telefoon</Label>
+              <Input
+                id="phone"
+                value={orderData.phone}
+                onChange={(e) => setOrderData({ ...orderData, phone: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="quantity">Aantal *</Label>
+              <Input
+                id="quantity"
+                type="number"
+                min="1"
+                max={product.stock}
+                value={orderData.quantity}
+                onChange={(e) => setOrderData({ ...orderData, quantity: Number.parseInt(e.target.value) })}
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="message">Bericht</Label>
+              <Input
+                id="message"
+                value={orderData.message}
+                onChange={(e) => setOrderData({ ...orderData, message: e.target.value })}
+                placeholder="Extra informatie of vragen..."
+              />
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <Button type="submit" disabled={submitting} className="flex-1">
+                {submitting ? "Verzenden..." : "Bestelling Verzenden"}
+              </Button>
+              <Button type="button" variant="outline" onClick={onClose}>
+                Annuleren
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -135,29 +340,90 @@ export default function HomePage() {
             <TabsTrigger value="rim">Velgen</TabsTrigger>
           </TabsList>
 
-          <div className="mb-6">
+          <div className="mb-6 flex gap-2 items-center">
             <Input
               placeholder="Zoeken..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-sm"
             />
+            <Button variant="outline" onClick={() => setSearchTerm("")} disabled={!searchTerm}>
+              Reset
+            </Button>
           </div>
 
           <TabsContent value="tire">
-            <ProductTable products={filteredProducts} loading={loading} />
+            <ProductTable
+              products={filteredProducts}
+              loading={loading}
+              setSelectedProduct={setSelectedProduct}
+              setShowProductDetails={setShowProductDetails}
+              handleSort={handleSort}
+              sortField={sortField}
+              sortDirection={sortDirection}
+            />
           </TabsContent>
 
           <TabsContent value="rim">
-            <ProductTable products={filteredProducts} loading={loading} />
+            <ProductTable
+              products={filteredProducts}
+              loading={loading}
+              setSelectedProduct={setSelectedProduct}
+              setShowProductDetails={setShowProductDetails}
+              handleSort={handleSort}
+              sortField={sortField}
+              sortDirection={sortDirection}
+            />
           </TabsContent>
         </Tabs>
       </div>
+      {/* Popups */}
+      {showProductDetails && selectedProduct && (
+        <ProductDetailsPopup
+          product={selectedProduct}
+          onClose={() => {
+            setShowProductDetails(false)
+            setSelectedProduct(null)
+          }}
+          onOrder={() => {
+            setShowProductDetails(false)
+            setOrderFormProduct(selectedProduct)
+            setShowOrderForm(true)
+          }}
+        />
+      )}
+
+      {showOrderForm && orderFormProduct && (
+        <OrderFormPopup
+          product={orderFormProduct}
+          onClose={() => {
+            setShowOrderForm(false)
+            setOrderFormProduct(null)
+            setSelectedProduct(null)
+          }}
+        />
+      )}
     </div>
   )
 }
 
-function ProductTable({ products, loading }: { products: Product[]; loading: boolean }) {
+function ProductTable({
+  products,
+  loading,
+  setSelectedProduct,
+  setShowProductDetails,
+  handleSort,
+  sortField,
+  sortDirection,
+}: {
+  products: Product[]
+  loading: boolean
+  setSelectedProduct: any
+  setShowProductDetails: any
+  handleSort: (field: string) => void
+  sortField: string
+  sortDirection: "asc" | "desc"
+}) {
   if (loading) {
     return <div className="text-center py-8">Laden...</div>
   }
@@ -168,12 +434,24 @@ function ProductTable({ products, loading }: { products: Product[]; loading: boo
         <TableHeader>
           <TableRow>
             <TableHead>Afbeelding</TableHead>
-            <TableHead>ID</TableHead>
-            <TableHead>Merk</TableHead>
-            <TableHead>Model</TableHead>
-            <TableHead>Specificaties</TableHead>
-            <TableHead>Prijs (€)</TableHead>
-            <TableHead>Voorraad</TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("id")}>
+              ID {sortField === "id" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("brand")}>
+              Merk {sortField === "brand" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("model")}>
+              Model {sortField === "model" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("specifications")}>
+              Specificaties {sortField === "specifications" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("price")}>
+              Prijs (€) {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+            <TableHead className="cursor-pointer hover:bg-gray-50" onClick={() => handleSort("stock")}>
+              Voorraad {sortField === "stock" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
             <TableHead>Acties</TableHead>
           </TableRow>
         </TableHeader>
@@ -203,10 +481,24 @@ function ProductTable({ products, loading }: { products: Product[]; loading: boo
               </TableCell>
               <TableCell>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedProduct(product)
+                      setShowProductDetails(true)
+                    }}
+                  >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  <Button size="sm" variant="outline">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedProduct(product)
+                      window.location.href = "/order" // Redirect to order page
+                    }}
+                  >
                     <ShoppingCart className="h-4 w-4" />
                   </Button>
                 </div>
