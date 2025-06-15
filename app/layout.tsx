@@ -74,7 +74,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        <footer className="w-full py-4 text-center text-sm text-gray-600 bg-white border-t">
+          Banden.autos © 2025
+        </footer>
+      </body>
     </html>
   )
 }
