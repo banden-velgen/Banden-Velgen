@@ -170,6 +170,14 @@ export default function HomePage() {
               product.stock
             )}
           </p>
+          <p>
+            <strong>Status:</strong>{' '}
+            {product.status === 'Nieuw' ? (
+              <span className="px-2 py-1 rounded text-white" style={{background:'#166534'}}>Nieuw</span>
+            ) : (
+              <span className="px-2 py-1 rounded text-white" style={{background:'#b45309'}}>2e hands</span>
+            )}
+          </p>
         </div>
 
         <div className="flex gap-2">
@@ -491,6 +499,9 @@ function ProductTable({
             <TableHead className="min-w-[100px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("stock")}>
               Voorraad {sortField === "stock" && (sortDirection === "asc" ? "↑" : "↓")}
             </TableHead>
+            <TableHead className="min-w-[100px] cursor-pointer hover:bg-gray-50" onClick={() => handleSort("status")}>
+              Status {sortField === "status" && (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
             <TableHead className="min-w-[100px]">Acties</TableHead>
           </TableRow>
         </TableHeader>
@@ -532,6 +543,13 @@ function ProductTable({
                   <span className="text-red-600 font-semibold">Uitverkocht</span>
                 ) : (
                   product.stock
+                )}
+              </TableCell>
+              <TableCell>
+                {product.status === 'Nieuw' ? (
+                  <span className="px-2 py-1 rounded text-white" style={{background:'#166534'}}>Nieuw</span>
+                ) : (
+                  <span className="px-2 py-1 rounded text-white" style={{background:'#b45309'}}>2e hands</span>
                 )}
               </TableCell>
               <TableCell>

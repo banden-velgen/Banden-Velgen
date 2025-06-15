@@ -226,6 +226,7 @@ export default function AdminPage() {
                         <TableHead>Model</TableHead>
                         <TableHead>Prijs per stuk</TableHead>
                         <TableHead>Voorraad</TableHead>
+                        <TableHead>Status</TableHead>
                         <TableHead>Acties</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -251,6 +252,13 @@ export default function AdminPage() {
                           <TableCell>{product.model}</TableCell>
                           <TableCell>€{product.price.toFixed(2)}</TableCell>
                           <TableCell>{product.stock}</TableCell>
+                          <TableCell>
+                            {product.status === 'Nieuw' ? (
+                              <span className="px-2 py-1 rounded text-white" style={{background:'#166534'}}>Nieuw</span>
+                            ) : (
+                              <span className="px-2 py-1 rounded text-white" style={{background:'#b45309'}}>2e hands</span>
+                            )}
+                          </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
                               <Button
@@ -383,6 +391,7 @@ function ProductForm({
     price: product?.price || 0,
     stock: product?.stock || 0,
     image_url: product?.image_url || "",
+    status: product?.status || "2e hands",
   })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -550,6 +559,22 @@ function ProductForm({
           onChange={(e) => setFormData({ ...formData, stock: Number.parseInt(e.target.value) })}
           required
         />
+      </div>
+
+      <div>
+        <Label htmlFor="status">Status</Label>
+        <Select
+          value={formData.status || '2e hands'}
+          onValueChange={(value: string) => setFormData({ ...formData, status: value })}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Nieuw">Nieuw</SelectItem>
+            <SelectItem value="2e hands">2e hands</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex gap-2 pt-4">

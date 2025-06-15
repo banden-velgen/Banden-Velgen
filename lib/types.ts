@@ -18,4 +18,5 @@ export interface Product {
   stock: number
   image_url?: string
   created_at: string
+  status: string // 'Nieuw' or '2e hands'
 }
