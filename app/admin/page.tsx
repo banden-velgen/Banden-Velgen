@@ -254,9 +254,9 @@ export default function AdminPage() {
                           <TableCell>{product.stock}</TableCell>
                           <TableCell>
                             {product.status === 'Nieuw' ? (
-                              <span className="px-2 py-1 rounded text-white" style={{background:'#166534'}}>Nieuw</span>
+                              <span className="px-2 py-1 rounded text-white" style={{background:'#2c5765'}}>Nieuw</span>
                             ) : (
-                              <span className="px-2 py-1 rounded text-white" style={{background:'#b45309'}}>2e hands</span>
+                              <span className="px-2 py-1 rounded text-white" style={{background:'#3c2774'}}>2e hands</span>
                             )}
                           </TableCell>
                           <TableCell>
