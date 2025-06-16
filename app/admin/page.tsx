@@ -224,6 +224,7 @@ export default function AdminPage() {
                         <TableHead>Type</TableHead>
                         <TableHead>Merk</TableHead>
                         <TableHead>Model</TableHead>
+                        <TableHead>Specificaties</TableHead>
                         <TableHead>Prijs per stuk</TableHead>
                         <TableHead>Voorraad</TableHead>
                         <TableHead>Status</TableHead>
@@ -250,6 +251,7 @@ export default function AdminPage() {
                           <TableCell className="capitalize">{product.type === "tire" ? "Band" : "Velg"}</TableCell>
                           <TableCell>{product.brand}</TableCell>
                           <TableCell>{product.model}</TableCell>
+                          <TableCell>{product.specifications}</TableCell>
                           <TableCell>€{product.price.toFixed(2)}</TableCell>
                           <TableCell>
                             {product.stock === 0 ? (
