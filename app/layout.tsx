@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -81,6 +82,23 @@ export default function RootLayout({
         <footer className="w-full py-4 text-center text-sm text-gray-600 bg-white border-t">
           Banden.autos © 2025
         </footer>
+        <Script id="tradetracker-supertag" strategy="afterInteractive">
+          {`
+            var _TradeTrackerTagOptions = {
+                t: 'a',
+                s: '490995',
+                chk: 'c5d1002ad7b9d5ee923af122c597310f',
+                overrideOptions: {}
+            };
+
+            (function() {
+              var tt = document.createElement('script'), s = document.getElementsByTagName('script')[0];
+              tt.setAttribute('type', 'text/javascript');
+              tt.setAttribute('src', (document.location.protocol == 'https:' ? 'https' : 'http') + '://tm.tradetracker.net/tag?t=' + _TradeTrackerTagOptions.t + '&s=' + _TradeTrackerTagOptions.s + '&chk=' + _TradeTrackerTagOptions.chk);
+              s.parentNode.insertBefore(tt, s);
+            })();
+          `}
+        </Script>
       </body>
     </html>
   )
